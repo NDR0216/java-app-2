@@ -12,15 +12,3 @@ repositories {
 dependencies {
   testImplementation 'junit:junit:4.12'
 }
-
-task printBuildDir {
-  println buildDir
-}
-
-task printProjectName {
-  println project.name
-}
-
-task printProjectVersion {
-  println project.version
-}
