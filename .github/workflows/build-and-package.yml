@@ -1,0 +1,40 @@
+name: Build and Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Build and package
+        run: |
+          if [ -f pom.xml ]; then
+            echo "Using Maven"
+            mvn package
+            echo "JAR_file=target/java-app-1.0-SNAPSHOT.jar" >> "$GITHUB_ENV"
+          elif [ -f build.gradle ]; then
+            echo "Using Gradle"
+            gradle build
+            echo "JAR_file=build/libs/java-app-main-1.0-SNAPSHOT.jar" >> "$GITHUB_ENV"
+          else
+            echo "No build tool found"
+            exit 1
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app.jar
+          path: ${{ env.JAR_file }}
