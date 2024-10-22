@@ -28,7 +28,9 @@ jobs:
           elif [ -f build.gradle ]; then
             echo "Using Gradle"
             gradle build
-            JAR_FILE=$(gradle -q printBuildDir --console=plain)/libs/$(gradle -q printProjectName --console=plain)-$(gradle -q printProjectVersion --console=plain).jar
+            JAR_FILE=$(gradle -q properties --property buildDir | cut -d ':' -f2- | tr -d '[:space:]') \
+                      /libs/$(gradle -q properties --property name | cut -d ':' -f2- | tr -d '[:space:]') \
+                      -$(gradle -q properties --property version | cut -d ':' -f2- | tr -d '[:space:]').jar
             echo "JAR_file=$JAR_FILE" >> "$GITHUB_ENV"
           else
             echo "No build tool found"
