@@ -23,11 +23,13 @@ jobs:
           if [ -f pom.xml ]; then
             echo "Using Maven"
             mvn package
-            echo "JAR_file=target/java-app-1.0-SNAPSHOT.jar" >> "$GITHUB_ENV"
+            JAR_FILE=$(mvn help:evaluate -Dexpression=project.build.directory -q -DforceStdout)/$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout).jar
+            echo "JAR_file=$JAR_FILE" >> "$GITHUB_ENV"
           elif [ -f build.gradle ]; then
             echo "Using Gradle"
             gradle build
-            echo "JAR_file=build/libs/java-app-main-1.0-SNAPSHOT.jar" >> "$GITHUB_ENV"
+            JAR_FILE=$(gradle -q printBuildDir --console=plain)/libs/$(gradle -q printProjectName --console=plain)-$(gradle -q printProjectVersion --console=plain).jar
+            echo "JAR_file=$JAR_FILE" >> "$GITHUB_ENV"
           else
             echo "No build tool found"
             exit 1
